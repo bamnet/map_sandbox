@@ -1,5 +1,5 @@
 /**
- * Support more than the max ways for the DirectionService by splitting
+ * Support more than the max waypoints for the DirectionService by splitting
  * and merging the results.
  *
  * @param {String} start The start location.
