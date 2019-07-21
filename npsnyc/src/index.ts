@@ -1,4 +1,5 @@
 import { ListParks, Park } from './parks';
+import { TSPSolver } from './tsp_solver';
 
 let placesSvc: import("./modern_services").PlacesService;
 let directionSvc: import("./modern_services").DirectionService;
@@ -50,6 +51,10 @@ async function transitRoute(distanceMatrixSvc: import("./modern_services").Dista
     };
     distanceMatrixSvc.getDistanceMatrixAsync(req).then((res) => {
         console.log(res);
+        const matrix = res.rows.map(row => row.elements.map(e => (e.duration ? e.duration.value : 999999999)));
+        TSPSolver(matrix).then((res) => {
+            console.log(res.duration);
+        });
     });
 }
 
