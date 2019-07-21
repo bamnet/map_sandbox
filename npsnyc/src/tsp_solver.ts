@@ -1,15 +1,15 @@
 const PATH = 'https://us-central1-river-carrier-523.cloudfunctions.net/tsp_solver';
 
 interface TSPRequest {
-    matrix: Number[][];
+    matrix: number[][];
 }
 
 interface TSPResponse {
-    duration: Number,
-    path: Number[],
+    duration: number,
+    path: number[],
 }
 
-export async function TSPSolver(matrix: Number[][]): Promise<TSPResponse> {
+export async function TSPSolver(matrix: number[][]): Promise<TSPResponse> {
     const req: TSPRequest = { matrix: matrix };
     return fetch(PATH, {
         method: 'POST',
