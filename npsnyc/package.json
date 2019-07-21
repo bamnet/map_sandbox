@@ -11,8 +11,11 @@
     "start": "parcel src/index.html",
     "build-prod": "parcel build src/index.html"
   },
-  "dependencies": {},
+  "dependencies": {
+    "limiter": "^1.1.4"
+  },
   "devDependencies": {
+    "@types/googlemaps": "^3.37.0",
     "parcel-bundler": "^1.12.3",
     "prettier": "^1.18.2",
     "typescript": "^3.5.3"
