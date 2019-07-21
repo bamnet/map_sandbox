@@ -5,6 +5,15 @@ from ortools.constraint_solver import pywrapcp
 
 
 def tsp_solver(request):
+    if request.method == 'OPTIONS':
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
+        }
+        return ('', 204, headers)
+
     request_json = request.get_json(silent=True)
     distance_matrix = request_json['matrix']
 
@@ -36,4 +45,4 @@ def tsp_solver(request):
             result['path'].append(manager.IndexToNode(index))
             index = solution.Value(routing.NextVar(index))
         result['path'].append(manager.IndexToNode(index))
-    return flask.jsonify(result)
+    return (flask.jsonify(result), 200, {'Access-Control-Allow-Origin': '*'})
