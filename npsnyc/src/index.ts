@@ -13,7 +13,7 @@ async function initMap() {
 
     const nycParks = filterParks(placesSvc);
     nycParks.then((parks) => {
-        transitRoute(distanceMatrixSvc, parks);
+        transitRoute(distanceMatrixSvc, parks).then(order => order.forEach(p => console.log(p.name)));
         // routeBetween(directionSvc, parks);
     })
     console.log(nycParks);
@@ -44,17 +44,17 @@ async function routeBetween(directionSvc: import("./modern_services").DirectionS
 
 async function transitRoute(distanceMatrixSvc: import("./modern_services").DistanceMatrixService, parks: Park[]) {
     const points = parks.map((p) => p.place);
+    points.unshift({query: 'New York Penn Station'});
     const req: google.maps.DistanceMatrixRequest = {
         origins: points,
         destinations: points,
         travelMode: google.maps.TravelMode.TRANSIT,
     };
-    distanceMatrixSvc.getDistanceMatrixAsync(req).then((res) => {
-        console.log(res);
+    return distanceMatrixSvc.getDistanceMatrixAsync(req).then((res) => {
         const matrix = res.rows.map(row => row.elements.map(e => (e.duration ? e.duration.value : 999999999)));
-        TSPSolver(matrix).then((res) => {
-            console.log(res.duration);
-        });
+        return TSPSolver(matrix);
+    }).then((result) => {
+        return result.path.filter(i => i != 0).map(i => parks[i-1]);
     });
 }
 
