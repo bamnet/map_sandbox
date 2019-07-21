@@ -98,7 +98,7 @@ export class DistanceMatrixService extends google.maps.DistanceMatrixService {
 
         for (let i = 0; i < requests; i++) {
             const lowerBound = i * interval;
-            const upperBound = Math.min(((i + 1) * interval) - 1, destinations);
+            const upperBound = Math.min(((i + 1) * interval), destinations);
 
             const req = Object.assign({}, originalReq);
             req.destinations = req.destinations!.slice(lowerBound, upperBound);
