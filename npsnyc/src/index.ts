@@ -1,6 +1,12 @@
 import { ListParks, Park } from './parks';
 import { TSPSolver } from './tsp_solver';
 
+interface TripSummary {
+    parks: Park[],
+    duration: number,
+    path: google.maps.LatLng[],
+}
+
 let placesSvc: import("./modern_services").PlacesService;
 let directionSvc: import("./modern_services").DirectionService;
 let distanceMatrixSvc: import("./modern_services").DistanceMatrixService;
@@ -13,10 +19,9 @@ async function initMap() {
 
     const nycParks = filterParks(placesSvc);
     nycParks.then((parks) => {
-        transitRoute(distanceMatrixSvc, parks).then(order => order.forEach(p => console.log(p.name)));
-        // routeBetween(directionSvc, parks);
-    })
-    console.log(nycParks);
+        return transitRoute(distanceMatrixSvc, parks);
+        // return routeBetween(directionSvc, parks);
+    }).then(res => console.log(res))
 };
 
 async function filterParks(placesSvc: import("./modern_services").PlacesService): Promise<Park[]> {
@@ -35,16 +40,20 @@ async function routeBetween(directionSvc: import("./modern_services").DirectionS
         travelMode: google.maps.TravelMode.WALKING,
         waypoints: waypoints,
     };
-    console.log(req);
-    directionSvc.routeAsync(req).then((res) => {
+    return directionSvc.routeAsync(req).then((res) => {
         const seconds = res.routes[0].legs.reduce((a, b) => (a + b.duration.value), 0);
-        console.log(seconds);
+        return <TripSummary>{
+            parks: res.routes[0].waypoint_order.map(i => parks[i]),
+            duration: seconds,
+            path: res.routes[0].overview_path,
+        };
     });
 }
 
 async function transitRoute(distanceMatrixSvc: import("./modern_services").DistanceMatrixService, parks: Park[]) {
+    const origin = 'New York Penn Station';
     const points = parks.map((p) => p.place);
-    points.unshift({query: 'New York Penn Station'});
+    points.unshift({ query: origin });
     const req: google.maps.DistanceMatrixRequest = {
         origins: points,
         destinations: points,
@@ -54,7 +63,26 @@ async function transitRoute(distanceMatrixSvc: import("./modern_services").Dista
         const matrix = res.rows.map(row => row.elements.map(e => (e.duration ? e.duration.value : 999999999)));
         return TSPSolver(matrix);
     }).then((result) => {
-        return result.path.filter(i => i != 0).map(i => parks[i-1]);
+        const orderedParks = result.path.filter(i => i != 0).map(i => parks[i - 1]);
+        return Promise.all(orderedParks.map((p, i) => {
+            const req: google.maps.DirectionsRequest = {
+                origin: (i == 0 ? origin : { placeId: parks[i - 1].placeId }),
+                destination: { placeId: p.placeId },
+                travelMode: google.maps.TravelMode.TRANSIT,
+            };
+            return directionSvc.routeAsync(req);
+        })).then((results) => {
+            const result: TripSummary = {
+                parks: orderedParks,
+                duration: 0,
+                path: [],
+            };
+            return results.reduce((a, b) => {
+                a.duration += b.routes[0].legs.reduce((a, b) => (a + b.duration.value), 0);
+                a.path.push(...b.routes[0].overview_path);
+                return a;
+            }, result);
+        });
     });
 }
 
