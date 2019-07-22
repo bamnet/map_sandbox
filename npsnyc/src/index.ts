@@ -19,7 +19,7 @@ async function initMap() {
 
     const nycParks = filterParks(placesSvc);
     nycParks.then((parks) => {
-        return transitRoute(distanceMatrixSvc, parks);
+        return transitRoute(distanceMatrixSvc, directionSvc, parks);
         // return routeBetween(directionSvc, parks);
     }).then(res => console.log(res))
 };
@@ -50,7 +50,7 @@ async function routeBetween(directionSvc: import("./modern_services").DirectionS
     });
 }
 
-async function transitRoute(distanceMatrixSvc: import("./modern_services").DistanceMatrixService, parks: Park[]) {
+async function transitRoute(distanceMatrixSvc: import("./modern_services").DistanceMatrixService, directionSvc: import("./modern_services").DirectionService, parks: Park[]) {
     const origin = 'New York Penn Station';
     const points = parks.map((p) => p.place);
     points.unshift({ query: origin });
