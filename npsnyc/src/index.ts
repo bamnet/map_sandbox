@@ -84,6 +84,12 @@ async function transitRoute(distanceMatrixSvc: import("./modern_services").Dista
         origins: points,
         destinations: points,
         travelMode: google.maps.TravelMode.TRANSIT,
+        transitOptions: {modes: [
+            google.maps.TransitMode.RAIL,
+            google.maps.TransitMode.SUBWAY,
+            google.maps.TransitMode.TRAIN,
+            google.maps.TransitMode.TRAM,
+        ]},
     };
     return distanceMatrixSvc.getDistanceMatrixAsync(req).then((res) => {
         const matrix = res.rows.map(row => row.elements.map(e => (e.duration ? e.duration.value : 999999999)));
@@ -95,6 +101,12 @@ async function transitRoute(distanceMatrixSvc: import("./modern_services").Dista
                 origin: (i == 0 ? origin : { placeId: orderedParks[i - 1].placeId }),
                 destination: { placeId: p.placeId },
                 travelMode: google.maps.TravelMode.TRANSIT,
+                transitOptions: {modes: [
+                    google.maps.TransitMode.RAIL,
+                    google.maps.TransitMode.SUBWAY,
+                    google.maps.TransitMode.TRAIN,
+                    google.maps.TransitMode.TRAM,
+                ]},
             };
             return directionSvc.routeAsync(req);
         })).then((results) => {
