@@ -17,12 +17,38 @@ async function initMap() {
     directionSvc = new services.DirectionService();
     distanceMatrixSvc = new services.DistanceMatrixService();
 
+    const map = setupMap(document.getElementById('map')!);
+
     const nycParks = filterParks(placesSvc);
     nycParks.then((parks) => {
         return transitRoute(distanceMatrixSvc, directionSvc, parks);
         // return routeBetween(directionSvc, parks);
-    }).then(res => console.log(res))
+    }).then(res => {
+        console.log(res);
+
+        new google.maps.Polyline({
+            path: res.path,
+            map: map,
+        });
+
+        res.parks.forEach((p, i) => {
+            console.log(p.placeResult);
+            const marker = new google.maps.Marker({
+                position: p.placeResult!.geometry!.location,
+                label: `${i}`,
+                title: p.name,
+                map: map,
+            });
+        });
+    });
 };
+
+function setupMap(elem: Element) {
+    return new google.maps.Map(elem, {
+        center: { lat: 40.745178, lng: -73.994294 },
+        zoom: 13,
+    });
+}
 
 async function filterParks(placesSvc: import("./modern_services").PlacesService): Promise<Park[]> {
     return Promise.all(ListParks().map((park) => park.findPlace(placesSvc))).then((parks) => {
@@ -66,7 +92,7 @@ async function transitRoute(distanceMatrixSvc: import("./modern_services").Dista
         const orderedParks = result.path.filter(i => i != 0).map(i => parks[i - 1]);
         return Promise.all(orderedParks.map((p, i) => {
             const req: google.maps.DirectionsRequest = {
-                origin: (i == 0 ? origin : { placeId: parks[i - 1].placeId }),
+                origin: (i == 0 ? origin : { placeId: orderedParks[i - 1].placeId }),
                 destination: { placeId: p.placeId },
                 travelMode: google.maps.TravelMode.TRANSIT,
             };

@@ -66,7 +66,7 @@ export class Park {
         const req = {
             query: this.name,
             locationBias: { lat: 40.730610, lng: -73.935242 },
-            fields: ['place_id', 'formatted_address', 'name'],
+            fields: ['place_id', 'formatted_address', 'name', 'geometry.location'],
         };
         return svc.findPlaceFromQueryAsync(req).then((results) => {
             this.placeResult = results[0];
