@@ -16,7 +16,7 @@ const ParkNames = [
     'Home of Franklin D. Roosevelt NHS',
     'Lower East Side Tenement Museum NHS',
     'Martin Van Buren NHS',
-    'National Parks of New York Harbor',
+   // 'National Parks of New York Harbor',
     'Sagamore Hill NHS',
     'Saint Paul’s Church NHS',
     'Saratoga NHP',
