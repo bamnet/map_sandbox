@@ -24,11 +24,12 @@
     When it finished loading, the browser resumes the expected event-loop,
     triggering onload and any async code waiting on the stack.
   </p>
-  <script src="src/loading.ts"></script>
+  <script src="src/loading_debug.ts"></script>
   <script
     type="text/javascript" onload="onScriptLoad()"
     async defer
     src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAX2ZNfyW_XMZr1IuibCAZ66lXlj9bXz-Q&callback=callback"></script>
-</body>
+  <script src="src/onload.ts"></script>
+  </body>
 
 </html>
