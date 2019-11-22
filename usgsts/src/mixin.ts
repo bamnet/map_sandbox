@@ -15,6 +15,5 @@ window.initMap = () => {
   const srcImage =
       'https://developers.google.com/maps/documentation/javascript/examples/full/images/talkeetna.png';
 
-  // const ;
   const overlay = new LateUSGSOverlay(bounds, srcImage, map);
 };
