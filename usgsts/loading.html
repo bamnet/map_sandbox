@@ -1,0 +1,34 @@
+<html>
+<meta name="viewport" content="initial-scale=1.0">
+<meta charset="utf-8">
+<body>
+  <p>
+    This page explores the ordering of how the API is loaded. Looking at your
+    console, you'll see a variety of log statements from various points in the
+    loading process.
+  </p>
+  <p>
+    In my tests, the sequence is:
+    <ol>
+      <li>google.maps is set</li>
+      <li>google.maps.MODULE_NAMEs are set</li>
+      <li>&callback= is executed</li>
+      <li>&gt;script&lt; onLoad is executed</li>
+      <li>async code from google.maps being set is executed</li>
+      <li>async code from google.maps.MODULE_NAMEs is executed</li>
+    </ol>
+  </p>
+  <p>
+    I interpret this to mean that the JS API is loaded as one big synchronous
+    block, with the callback executed as the final step in the loading process.
+    When it finished loading, the browser resumes the expected event-loop,
+    triggering onload and any async code waiting on the stack.
+  </p>
+  <script src="src/loading.ts"></script>
+  <script
+    type="text/javascript" onload="onScriptLoad()"
+    async defer
+    src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAX2ZNfyW_XMZr1IuibCAZ66lXlj9bXz-Q&callback=callback"></script>
+</body>
+
+</html>
