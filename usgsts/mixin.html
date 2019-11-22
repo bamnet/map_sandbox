@@ -1,0 +1,42 @@
+<html>
+<meta name="viewport" content="initial-scale=1.0">
+<meta charset="utf-8">
+<style>
+  /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+  #map {
+    height: 100%;
+  }
+
+  #floating-panel {
+    position: absolute;
+    top: 10px;
+    left: 25%;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+    text-align: center;
+    font-family: 'Roboto', 'sans-serif';
+    line-height: 30px;
+    padding-left: 10px;
+  }
+
+  /* Optional: Makes the sample page fill the window. */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<body>
+  <div id="map"></div>
+  <script src="src/mixin.ts"></script>
+  <script type="text/javascript" async defer
+    src="http://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAX2ZNfyW_XMZr1IuibCAZ66lXlj9bXz-Q&callback=initMap"></script>
+
+</body>
+
+</html>
