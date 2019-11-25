@@ -15,10 +15,6 @@ class Stub {}
  *   specifying that `google.maps.OverlayView` and `google.maps.MVCObject` both
  *   need to be applied.
  *
- * - To detect when the Google Maps API fully loads, we use a Proxy which might
- *   be too cool for older browers (unknown compatility). I think we should
- *   break the "how to tell when the google maps api loads" problem into it's
- *   own seperate space.
  */
 
 /**
