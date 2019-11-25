@@ -1,7 +1,5 @@
 class Stub {}
 
-const listeners = new Map();
-
 /**
  * Open Issues:
  *
@@ -35,19 +33,7 @@ export function stub(modules: string[]) {
     modules.forEach(module => {
       const frag = module.split('.');
       frag.reduce((o, i, j) => {
-        if (j === frag.length - 2) {
-          o[i] = new Proxy(Stub, {
-            set: (obj, prop, value) => {
-              obj[prop] = value;
-              if (prop === frag[frag.length - 1] && value != Stub) {
-                listeners.get(module)();
-              }
-              return true;
-            }
-          });
-        } else {
-          o[i] = Stub;
-        }
+        o[i] = Stub;
         return o[i];
       }, window);
     });
@@ -55,27 +41,11 @@ export function stub(modules: string[]) {
 }
 
 /**
- * `deferMixin` sets up a listener to apply mixins to a klass when a module
- * is set.  As an example, when modules='google.maps.OverlayView' is loaded,
- * we should apply mixins to the klass=USGSOverlay.
- *
- */
-export function deferMixin(klass: Function, modules: string[]) {
-  modules.forEach(module => {
-    listeners.set(module, () => {
-      applyMixins(klass, [
-        module.split('.').reduce((o, i) => o[i], window), google.maps.MVCObject
-      ]);
-    });
-  });
-}
-
-/**
  * `applyMixins` copies properties between classes, implementing a simple mixin
  * pattern.
  *
  */
-function applyMixins(derivedCtor: any, baseCtors: any[]) {
+export function applyMixins(derivedCtor: any, baseCtors: any[]) {
   baseCtors.forEach(baseCtor => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
       Object.defineProperty(
