@@ -43,9 +43,7 @@ export class LoadDetector {
       set: (obj, prop, val) => {
         obj[prop] = val;
         if (prop === 'version') {
-          setTimeout(() => {
-            LoadDetector.getInstance().runCallbacks();
-          });
+          LoadDetector.getInstance().runCallbacks();
         }
         return true;
       }
@@ -59,9 +57,7 @@ export class LoadDetector {
       'version': {
         set(val) {
           this._version = val;
-          setTimeout(() => {
-            LoadDetector.getInstance().runCallbacks();
-          });
+          LoadDetector.getInstance().runCallbacks();
         },
         get() {
           return this._version;
