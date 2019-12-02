@@ -1,3 +1,5 @@
+import {whenLoaded} from './onload';
+
 class Stub {}
 
 /**
@@ -50,5 +52,26 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]) {
           derivedCtor.prototype, name,
           Object.getOwnPropertyDescriptor(baseCtor.prototype, name));
     });
+  });
+}
+
+
+export function fixParent(derivedCtor: any, base: string) {
+  whenLoaded(() => {
+    const baseMod = base.split('.').reduce((o, i) => {
+      return o[i];
+    }, window);
+
+    let mod = baseMod.prototype;
+    let properties = Object.keys(mod);
+    while (properties.length > 0) {
+      properties.forEach(name => {
+        Object.defineProperty(
+            derivedCtor.prototype, name,
+            Object.getOwnPropertyDescriptor(mod, name));
+      });
+      mod = mod.__proto__;
+      properties = Object.keys(mod);
+    }
   });
 }

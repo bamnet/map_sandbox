@@ -1,6 +1,4 @@
-import {whenLoaded} from './onload';
-
-import {applyMixins, stub} from './shim';
+import {fixParent, stub} from './shim';
 
 stub(['google.maps.OverlayView']);
 export class LateUSGSOverlay extends google.maps.OverlayView {
@@ -61,7 +59,4 @@ export class LateUSGSOverlay extends google.maps.OverlayView {
     this.div.parentNode.removeChild(this.div);
   }
 }
-whenLoaded(() => {
-  applyMixins(
-      LateUSGSOverlay, [google.maps.OverlayView, google.maps.MVCObject]);
-});
+fixParent(LateUSGSOverlay, 'google.maps.OverlayView');
