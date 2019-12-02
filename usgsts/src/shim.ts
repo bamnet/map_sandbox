@@ -6,10 +6,6 @@ class Stub {}
  * - Since we're redefining `window.google.maps` this may impact other code
  *   which is attemping to detect if the Maps API is loaded.
  *
- * - `stub` function can only be used once. A second class calling stub() would
- *   have unknown effects since google would now exist, but not necessarily with
- *   the correctly stubbed classes.  <-- This feels fixable.
- *
  * - `applyMixins` doesn't walk up the tree, copying the prototype of parents.
  *   This requires us to manually define the inheritance tree N+1 levels,
  *   specifying that `google.maps.OverlayView` and `google.maps.MVCObject` both
@@ -25,11 +21,17 @@ class Stub {}
  *
  */
 export function stub(modules: string[]) {
-  if (typeof google === 'undefined') {
+  // Only try stubbing if google is undefined and there's no
+  // google.maps.version available. version looks like a good
+  // indicator for when the API is loaded.
+  if (typeof google === 'undefined' || !google?.maps?.version) {
     modules.forEach(module => {
       const frag = module.split('.');
       frag.reduce((o, i, j) => {
-        o[i] = Stub;
+        // Only stub when it's undefined.
+        if (o[i] === undefined) {
+          o[i] = Stub;
+        }
         return o[i];
       }, window);
     });
